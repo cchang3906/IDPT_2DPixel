@@ -1,0 +1,4 @@
+{
+    "dotnet.defaultSolution": "IDPT_2DPixel.sln",
+    "dotnet.preferCSharpExtension": true
+}

@@ -30,13 +30,12 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        HandleRotation();
     }
 
     private void FixedUpdate()
     {
         HandleMovement();
-        HandleRotation();
     }
     private void HandleMovement()
     {
@@ -45,19 +44,23 @@ public class PlayerControl : MonoBehaviour
     }
     private void HandleRotation()
     {
-        Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
-        Vector3 direction = (mouseWorldPosition - transform.position).normalized;
+        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
+        transform.up = mousePosition - new Vector2(transform.position.x, transform.position.y);
+        Vector3 cameraPosition = new Vector3((mousePosition.x / 2 + transform.position.x) / 2, (mousePosition.y / 2 + transform.position.y) / 2, -10);
+        mainCamera.transform.position = cameraPosition;
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+        //var dir = new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane) - mainCamera.ScreenToWorldPoint(transform.position);
+        //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        //Debug.Log(lookInput);
+        //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
     }
-    private void OnMove(InputValue inputValue)
+    public void OnMove(InputValue inputValue)
     {
         movementInput = inputValue.Get<Vector2>();
     }
-    public void OnLook(InputAction.CallbackContext context)
+    public void OnLook(InputValue inputValue)
     {
-        lookInput = context.ReadValue<Vector2>();
+        lookInput = inputValue.Get<Vector2>();
     }
 }

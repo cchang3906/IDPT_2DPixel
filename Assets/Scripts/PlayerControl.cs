@@ -1,20 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerControl : MonoBehaviour
 {
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float sprintMulti = 2f;
     [SerializeField] private float mouseSense = 2f;
+    [SerializeField] private Camera mainCamera;
     private Rigidbody2D rb;
-    private Camera mainCamera;
     private PlayerInputHandler inputHandler;
-    private Vector2 currentMovement;
+    private Vector2 movementInput;
+    private Vector2 lookInput;
+    private Vector2 smoothMovement;
+    private Vector2 smoothVelocity;
+
 
     private void Awake(){
         rb = GetComponent<Rigidbody2D>();
-        mainCamera = Camera.main;
         inputHandler = PlayerInputHandler.Instance;
     }
     void Start()
@@ -25,17 +30,34 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleMovement();
+
     }
 
-    void HandleMovement()
+    private void FixedUpdate()
     {
-        float speed = walkSpeed * (inputHandler.SprintValue > 0 ? sprintMulti : 1f);
-        Vector2 inputDirection = new Vector2(inputHandler.MoveInput.x, inputHandler.MoveInput.y);
-        inputDirection.Normalize();
+        HandleMovement();
+        HandleRotation();
+    }
+    private void HandleMovement()
+    {
+        smoothMovement = Vector2.SmoothDamp(smoothMovement, movementInput, ref smoothVelocity, 0.1f);
+        rb.velocity = smoothMovement * walkSpeed;
+    }
+    private void HandleRotation()
+    {
+        Vector3 mouseWorldPosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
+        Vector3 direction = (mouseWorldPosition - transform.position).normalized;
 
-        rb.velocity = new Vector2(inputHandler.MoveInput.x, );
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
 
-
+    }
+    private void OnMove(InputValue inputValue)
+    {
+        movementInput = inputValue.Get<Vector2>();
+    }
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        lookInput = context.ReadValue<Vector2>();
     }
 }

@@ -40,10 +40,10 @@ public class PlayerControl : MonoBehaviour
     }
     private void HandleMovement()
     {
-        Vector2 directionToMouse = (mousePosition - rb.position).normalized;
-        Vector2 movementDirection = directionToMouse * movementInput.y + Vector2.Perpendicular(directionToMouse) * movementInput.x;
+        //Vector2 directionToMouse = (mousePosition - rb.position).normalized;
+        //Vector2 movementDirection = directionToMouse * movementInput.y + new Vector2(movementInput.x, 0);
 
-        smoothMovement = Vector2.SmoothDamp(smoothMovement, movementDirection, ref smoothVelocity, 0.1f);
+        smoothMovement = Vector2.SmoothDamp(smoothMovement, movementInput, ref smoothVelocity, 0.1f);
         rb.velocity = smoothMovement * walkSpeed;
     }
     private void HandleRotation()

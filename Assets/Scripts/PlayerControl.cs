@@ -16,6 +16,7 @@ public class PlayerControl : MonoBehaviour
     private Vector2 lookInput;
     private Vector2 smoothMovement;
     private Vector2 smoothVelocity;
+    private Vector2 mousePosition;
 
 
     private void Awake(){
@@ -39,12 +40,15 @@ public class PlayerControl : MonoBehaviour
     }
     private void HandleMovement()
     {
-        smoothMovement = Vector2.SmoothDamp(smoothMovement, movementInput, ref smoothVelocity, 0.1f);
+        Vector2 directionToMouse = (mousePosition - rb.position).normalized;
+        Vector2 movementDirection = directionToMouse * movementInput.y + Vector2.Perpendicular(directionToMouse) * movementInput.x;
+
+        smoothMovement = Vector2.SmoothDamp(smoothMovement, movementDirection, ref smoothVelocity, 0.1f);
         rb.velocity = smoothMovement * walkSpeed;
     }
     private void HandleRotation()
     {
-        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
+        mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
         transform.up = mousePosition - new Vector2(transform.position.x, transform.position.y);
         Vector3 cameraPosition = new Vector3((mousePosition.x / 2 + transform.position.x) / 2, (mousePosition.y / 2 + transform.position.y) / 2, -10);
         mainCamera.transform.position = cameraPosition;

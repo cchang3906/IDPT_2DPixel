@@ -10,7 +10,6 @@ public class PlayerShooting : MonoBehaviour
     public float firingTime;
     private float timer;
     private PlayerInputHandler inputHandler;
-    // Start is called before the first frame update
     void Awake()
     {
         inputHandler = PlayerInputHandler.Instance;
@@ -35,11 +34,11 @@ public class PlayerShooting : MonoBehaviour
     }
     public void OnAttack(InputValue inputValue)
     {
-        Debug.Log("fired");
+        //Debug.Log("fired");
         if (canFire)
         {
             canFire = false;
-            Instantiate(bullet, bullet.transform.position, Quaternion.identity);
+            Instantiate(bullet, transform.position, Quaternion.identity);
         }
     }
 }

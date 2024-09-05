@@ -10,6 +10,9 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float sprintMulti = 2f;
     [SerializeField] private float mouseSense = 2f;
     [SerializeField] private Camera mainCamera;
+    [SerializeField] private float duration;
+    [SerializeField] private bool test;
+    [SerializeField] AnimationCurve curve;
     private Rigidbody2D rb;
     private PlayerInputHandler inputHandler;
     private Vector2 movementInput;
@@ -31,6 +34,10 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetMouseButtonDown(0))
+        {
+            StartCoroutine(Shake());
+        }
         HandleRotation();
     }
 
@@ -58,6 +65,19 @@ public class PlayerControl : MonoBehaviour
         //Debug.Log(lookInput);
         //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
+    }
+    IEnumerator Shake()
+    {
+        Vector3 startPos = mainCamera.transform.position;
+        float timer = 0f;
+        while (timer < duration)
+        {
+            Vector3 cameraPosition = new Vector3((mousePosition.x / 2 + transform.position.x) / 2, (mousePosition.y / 2 + transform.position.y) / 2, -10);
+            timer += Time.deltaTime;
+            float strength = curve.Evaluate(timer / duration);
+            mainCamera.transform.position =  cameraPosition + Random.insideUnitSphere * strength;
+            yield return null;
+        }
     }
     public void OnMove(InputValue inputValue)
     {

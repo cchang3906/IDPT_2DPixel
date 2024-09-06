@@ -5,10 +5,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
-    [SerializeField] private int bulletCount;
-    public GameObject bullet;
-    public bool canFire;
-    public float firingTime;
+    public int bulletCount;
+    [SerializeField] private GameObject bullet;
+    [SerializeField] private bool canFire;
+    [SerializeField] private float firingTime;
     private float timer;
     private PlayerInputHandler inputHandler;
     void Awake()

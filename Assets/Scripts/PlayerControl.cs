@@ -14,13 +14,15 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private bool test;
     [SerializeField] AnimationCurve curve;
     private Rigidbody2D rb;
+    private GameObject gun;
     private PlayerInputHandler inputHandler;
     private Vector2 movementInput;
     private Vector2 lookInput;
     private Vector2 smoothMovement;
     private Vector2 smoothVelocity;
     private Vector2 mousePosition;
-
+    private PlayerShooting shootingScript;
+    private int bulletCount;
 
     private void Awake(){
         rb = GetComponent<Rigidbody2D>();
@@ -28,14 +30,18 @@ public class PlayerControl : MonoBehaviour
     }
     void Start()
     {
-        
+        gun = GameObject.FindGameObjectWithTag("Gun");
+        shootingScript = gun.GetComponent<PlayerShooting>();
+        bulletCount = shootingScript.bulletCount;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && bulletCount > 0)
         {
+            bulletCount = shootingScript.bulletCount;
+            Debug.Log(bulletCount);
             StartCoroutine(Shake());
         }
         HandleRotation();

@@ -28,6 +28,10 @@ public class BulletScript : MonoBehaviour
         if (!other.CompareTag("Player"))
         {
             Destroy(gameObject);
+            if(other.tag == "Enemy")
+            {
+                Destroy(other.gameObject);
+            }
         }
     }
 }

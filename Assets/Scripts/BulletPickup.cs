@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyScript : MonoBehaviour
+public class BulletPickup : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] private int enemyHealth;
+    [SerializeField] private int bullets = 5;
     private GameObject player;
     private PlayerControl playerControl;
     void Awake()
@@ -17,22 +17,15 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (enemyHealth <= 0)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    public void TakeDamage(int damage)
-    {
-        enemyHealth -= damage;
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if(collision.tag == "Player")
         {
-            playerControl.TakeDamage(35);
+            playerControl.bulletCount += bullets;
+            Destroy(gameObject);
         }
     }
 }

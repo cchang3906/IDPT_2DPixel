@@ -6,10 +6,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerControl : MonoBehaviour
 {
+    [SerializeField] public int playerHealth = 100;
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float dashSpeed = 10f;
     [SerializeField] private float dashDuration = 1f;
-    [SerializeField] private float mouseSense = 2f;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private float shakeDuration;
     [SerializeField] private bool testShake;
@@ -17,6 +17,11 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float stamina = 100f;
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
+    [SerializeField] public int bulletCount = 10;
+    [SerializeField] private float knockbackForce = 1000f;
+    private GameObject wideSpotlight;
+    private bool takenDamage;
+    private GameObject narrowSpotlight;
     private bool isDashing;
     private Rigidbody2D rb;
     private GameObject gun;
@@ -28,7 +33,6 @@ public class PlayerControl : MonoBehaviour
     private Vector2 smoothVelocity;
     private Vector2 mousePosition;
     private PlayerShooting shootingScript;
-    private int bulletCount;
 
     private void Awake(){
         rb = GetComponent<Rigidbody2D>();
@@ -37,37 +41,51 @@ public class PlayerControl : MonoBehaviour
     void Start()
     {
         gun = GameObject.FindGameObjectWithTag("Gun");
-        sword = GameObject.FindGameObjectWithTag("Sword");
+        sword = GameObject.FindGameObjectWithTag("SwordPivot");
+        narrowSpotlight = GameObject.FindGameObjectWithTag("NarrowSpotlight");
+        wideSpotlight = GameObject.FindGameObjectWithTag("WideSpotlight");
         shootingScript = gun.GetComponent<PlayerShooting>();
         bulletCount = shootingScript.bulletCount;
         gun.SetActive(false);
+        narrowSpotlight.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        //rb.AddForce(new Vector2(100, 100));
+        if (playerHealth <= 0)
+        {
+            Destroy(gameObject);
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             gun.SetActive(true);
             sword.SetActive(false);
+            narrowSpotlight.SetActive(true);
+            wideSpotlight.SetActive(false);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             gun.SetActive(false);
             sword.SetActive(true);
+            narrowSpotlight.SetActive(false);
+            wideSpotlight.SetActive(true);
         }
-        if (Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf)
+        if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage)
         {
             bulletCount = shootingScript.bulletCount;
             //Debug.Log(bulletCount);
             StartCoroutine(Shake());
+            takenDamage = false;
         }
         HandleRotation();
+        HandleMovement();
     }
 
     private void FixedUpdate()
     {
-        HandleMovement();
         //Debug.Log(stamina);
         if (isDashing && stamina >= dashStamina)
         {
@@ -84,7 +102,11 @@ public class PlayerControl : MonoBehaviour
         //Vector2 movementDirection = directionToMouse * movementInput.y + new Vector2(movementInput.x, 0);
 
         smoothMovement = Vector2.SmoothDamp(smoothMovement, movementInput, ref smoothVelocity, 0.1f);
-        rb.velocity = smoothMovement * walkSpeed;
+        if (smoothMovement != new Vector2(0, 0))
+        {
+            rb.AddForce(smoothMovement * walkSpeed);
+        }
+        //Debug.Log(smoothMovement * walkSpeed);
     }
     private void HandleRotation()
     {
@@ -125,6 +147,24 @@ public class PlayerControl : MonoBehaviour
         if (stamina > dashStamina)
         {
             stamina -= dashStamina;
+        }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        playerHealth -= damage;
+        takenDamage = true;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Enemy")
+        {
+            Vector2 enemyDirection = (transform.position - collision.transform.position).normalized;
+            Vector2 knockback = enemyDirection * knockbackForce;
+            rb.AddForce(knockback, ForceMode2D.Impulse);
+            //rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
+            Debug.Log(knockback);
         }
     }
 

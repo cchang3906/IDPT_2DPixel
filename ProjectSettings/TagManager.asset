@@ -8,6 +8,9 @@ TagManager:
   - Gun
   - Sword
   - Enemy
+  - WideSpotlight
+  - NarrowSpotlight
+  - SwordPivot
   layers:
   - Default
   - TransparentFX

@@ -11,6 +11,8 @@ TagManager:
   - WideSpotlight
   - NarrowSpotlight
   - SwordPivot
+  - PlayerHitbox
+  - BulletPickup
   layers:
   - Default
   - TransparentFX

@@ -18,7 +18,6 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
     [SerializeField] public int bulletCount = 10;
-    [SerializeField] private float knockbackForce = 1000f;
     private GameObject wideSpotlight;
     private bool takenDamage;
     private GameObject narrowSpotlight;
@@ -154,18 +153,6 @@ public class PlayerControl : MonoBehaviour
     {
         playerHealth -= damage;
         takenDamage = true;
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "Enemy")
-        {
-            Vector2 enemyDirection = (transform.position - collision.transform.position).normalized;
-            Vector2 knockback = enemyDirection * knockbackForce;
-            rb.AddForce(knockback, ForceMode2D.Impulse);
-            //rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
-            Debug.Log(knockback);
-        }
     }
 
     private IEnumerator Dash()

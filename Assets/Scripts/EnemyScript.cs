@@ -6,12 +6,11 @@ public class EnemyScript : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] private int enemyHealth;
-    private GameObject player;
-    private PlayerControl playerControl;
+    [SerializeField] private int knockbackForce;
+    private Rigidbody2D rb;
     void Awake()
     {
-        player = GameObject.FindGameObjectWithTag("Player");
-        playerControl = player.GetComponent<PlayerControl>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -27,12 +26,13 @@ public class EnemyScript : MonoBehaviour
     {
         enemyHealth -= damage;
     }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.tag == "Player")
+        if (collision.tag == "Sword")
         {
-            playerControl.TakeDamage(35);
+            Vector2 playerDirection = (transform.position - collision.transform.position).normalized;
+            Vector2 knockback = playerDirection * knockbackForce;
+            rb.AddForce(knockback, ForceMode2D.Impulse);
         }
     }
 }

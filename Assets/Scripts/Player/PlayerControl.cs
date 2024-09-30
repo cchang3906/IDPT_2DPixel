@@ -18,9 +18,9 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
     [SerializeField] public int bulletCount = 10;
-    private GameObject wideSpotlight;
     private bool takenDamage;
-    private GameObject narrowSpotlight;
+    private GameObject narrowSpot;
+    private GameObject wideSpot;
     private bool isDashing;
     private Rigidbody2D rb;
     private GameObject gun;
@@ -36,17 +36,17 @@ public class PlayerControl : MonoBehaviour
     private void Awake(){
         rb = GetComponent<Rigidbody2D>();
         inputHandler = PlayerInputHandler.Instance;
+        gun = GameObject.FindGameObjectWithTag("Gun");
+        sword = GameObject.FindGameObjectWithTag("SwordPivot");
+        shootingScript = gun.GetComponent<PlayerShooting>();
+        bulletCount = shootingScript.bulletCount;
+        narrowSpot = GameObject.FindGameObjectWithTag("NarrowSpotlight");
+        wideSpot = GameObject.FindGameObjectWithTag("WideSpotlight");
     }
     void Start()
     {
-        gun = GameObject.FindGameObjectWithTag("Gun");
-        sword = GameObject.FindGameObjectWithTag("SwordPivot");
-        narrowSpotlight = GameObject.FindGameObjectWithTag("NarrowSpotlight");
-        wideSpotlight = GameObject.FindGameObjectWithTag("WideSpotlight");
-        shootingScript = gun.GetComponent<PlayerShooting>();
-        bulletCount = shootingScript.bulletCount;
+        narrowSpot.SetActive(false);
         gun.SetActive(false);
-        narrowSpotlight.SetActive(false);
     }
 
     // Update is called once per frame
@@ -62,15 +62,15 @@ public class PlayerControl : MonoBehaviour
         {
             gun.SetActive(true);
             sword.SetActive(false);
-            narrowSpotlight.SetActive(true);
-            wideSpotlight.SetActive(false);
+            narrowSpot.SetActive(true);
+            wideSpot.SetActive(false);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             gun.SetActive(false);
             sword.SetActive(true);
-            narrowSpotlight.SetActive(false);
-            wideSpotlight.SetActive(true);
+            narrowSpot.SetActive(false);
+            wideSpot.SetActive(true);
         }
         if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage)
         {
@@ -148,7 +148,6 @@ public class PlayerControl : MonoBehaviour
             stamina -= dashStamina;
         }
     }
-
     public void TakeDamage(int damage)
     {
         playerHealth -= damage;

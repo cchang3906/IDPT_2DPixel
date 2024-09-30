@@ -8,11 +8,13 @@ TagManager:
   - Gun
   - Sword
   - Enemy
-  - WideSpotlight
-  - NarrowSpotlight
   - SwordPivot
   - PlayerHitbox
   - BulletPickup
+  - Dimension
+  - WideSpotlight
+  - NarrowSpotlight
+  - NearSpotlight
   layers:
   - Default
   - TransparentFX
@@ -53,6 +55,15 @@ TagManager:
   - name: Weapon
     uniqueID: 2714250813
     locked: 0
+  - name: Spotlight
+    uniqueID: 2462849927
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Enemies
+    uniqueID: 807623085
+    locked: 0
+  - name: Player
+    uniqueID: 2710649009
     locked: 0

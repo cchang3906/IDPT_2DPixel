@@ -26,13 +26,11 @@ public class PlayerKnockback : MonoBehaviour
     {
         if (collision.tag == "Enemy")
         {
-            if (collision.GetComponent<EnemyScript>().aggro)
-            {
-                Vector2 enemyDirection = (transform.position - collision.transform.position).normalized;
-                Vector2 knockback = enemyDirection * knockbackForce;
-                rb.AddForce(knockback, ForceMode2D.Impulse);
-                playerControl.TakeDamage(30);
-            }
+            Vector2 enemyDirection = (transform.position - collision.transform.position).normalized;
+            Vector2 knockback = enemyDirection * knockbackForce;
+            rb.AddForce(knockback, ForceMode2D.Impulse);
+            playerControl.TakeDamage(30);
+            
             //rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
             //Debug.Log(knockback);
         }

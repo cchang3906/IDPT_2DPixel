@@ -25,7 +25,7 @@ public class BulletScript : MonoBehaviour
     // Update is called once per frame
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("PlayerHitbox"))
+        if (!(other.CompareTag("PlayerHitbox") || other.CompareTag("NearSpotlight") || other.CompareTag("WideSpotlight") || other.CompareTag("NarrowSpotlight")))
         {
             Destroy(gameObject);
             if(other.tag == "Enemy")

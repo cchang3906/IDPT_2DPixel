@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -18,6 +19,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
     [SerializeField] public int bulletCount = 10;
+    private Vector3 clampedCameraPosition;
     private bool takenDamage;
     private GameObject narrowSpot;
     private GameObject wideSpot;
@@ -111,8 +113,11 @@ public class PlayerControl : MonoBehaviour
     {
         mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
         transform.up = mousePosition - new Vector2(transform.position.x, transform.position.y);
-        Vector3 cameraPosition = new Vector3((mousePosition.x / 2 + transform.position.x) / 2, (mousePosition.y / 2 + transform.position.y) / 2, -10);
-        mainCamera.transform.position = cameraPosition;
+        Vector3 cameraPosition = new Vector3((transform.position.x + mousePosition.x) / 2, (transform.position.y + mousePosition.y) / 2, -10);
+        float clampedX = Mathf.Clamp(cameraPosition.x, transform.position.x - 5, transform.position.x + 5);
+        float clampedY = Mathf.Clamp(cameraPosition.y, transform.position.y - 3, transform.position.y + 3);
+        clampedCameraPosition = new Vector3(clampedX, clampedY, -10);
+        mainCamera.transform.position = clampedCameraPosition;
 
         //var dir = new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane) - mainCamera.ScreenToWorldPoint(transform.position);
         //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -125,10 +130,9 @@ public class PlayerControl : MonoBehaviour
         float timer = 0f;
         while (timer < shakeDuration)
         {
-            Vector3 cameraPosition = new Vector3((mousePosition.x / 2 + transform.position.x) / 2, (mousePosition.y / 2 + transform.position.y) / 2, -10);
             timer += Time.deltaTime;
             float strength = curve.Evaluate(timer / shakeDuration);
-            mainCamera.transform.position =  cameraPosition + Random.insideUnitSphere * strength;
+            mainCamera.transform.position =  clampedCameraPosition + Random.insideUnitSphere * strength;
             yield return null;
         }
     }

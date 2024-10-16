@@ -18,7 +18,9 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float stamina = 100f;
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
-    [SerializeField] public int bulletCount = 10;
+    [SerializeField] public int bulletCount;
+    private PlayerKnockback playerKnockback;
+    public int swordDmg;
     private Vector3 clampedCameraPosition;
     private bool takenDamage;
     private GameObject narrowSpot;
@@ -29,13 +31,25 @@ public class PlayerControl : MonoBehaviour
     private GameObject sword;
     private PlayerInputHandler inputHandler;
     private Vector2 movementInput;
-    public Vector2 lookInput;
+    private Vector2 lookInput;
     private Vector2 smoothMovement;
     private Vector2 smoothVelocity;
     private Vector2 mousePosition;
     private PlayerShooting shootingScript;
-
+    public static PlayerControl Instance
+    {
+        get;
+        private set;
+    }
     private void Awake(){
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         rb = GetComponent<Rigidbody2D>();
         inputHandler = PlayerInputHandler.Instance;
         gun = GameObject.FindGameObjectWithTag("Gun");
@@ -44,6 +58,7 @@ public class PlayerControl : MonoBehaviour
         bulletCount = shootingScript.bulletCount;
         narrowSpot = GameObject.FindGameObjectWithTag("NarrowSpotlight");
         wideSpot = GameObject.FindGameObjectWithTag("WideSpotlight");
+        playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();
     }
     void Start()
     {
@@ -160,8 +175,11 @@ public class PlayerControl : MonoBehaviour
 
     private IEnumerator Dash()
     {
+        playerKnockback.invincible = true;
         rb.velocity = new Vector2(movementInput.x * dashSpeed, movementInput.y * dashSpeed);
         yield return new WaitForSeconds(dashDuration);
+        rb.velocity = new Vector2(smoothMovement.x, smoothMovement.y);
         isDashing = false;
+        playerKnockback.invincible = false;
     }
 }

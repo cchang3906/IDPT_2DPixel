@@ -66,7 +66,7 @@ public class PlayerInputHandler : MonoBehaviour
         sprintAction.Enable();
         attackAction.Enable();
     }
-    private void onDisable(){
+    private void OnDisable(){
         moveAction.Disable();
         lookAction.Disable();
         sprintAction.Disable();

@@ -12,6 +12,7 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] private float walkSpeed;
     private GameObject player;
     private Rigidbody2D rb;
+    private PlayerControl playerControl;
     private Vector3 lastSeenPlayerPos;
     NavMeshAgent agent;
     private enum State
@@ -30,6 +31,7 @@ public class EnemyScript : MonoBehaviour
     }
     private void Start()
     {
+        playerControl = PlayerControl.Instance;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         lastSeenPlayerPos = transform.position;
@@ -71,12 +73,12 @@ public class EnemyScript : MonoBehaviour
                 Vector2 playerDirection = (transform.position - collision.transform.position).normalized;
                 Vector2 knockback = playerDirection * knockbackForce;
                 rb.AddForce(knockback, ForceMode2D.Impulse);
-                TakeDamage(50);
+                TakeDamage(playerControl.swordDmg);
             }
             else if (collision.tag == "PlayerHitbox")
             {
                 Vector2 playerDirection = (transform.position - collision.transform.position).normalized;
-                Vector2 knockback = playerDirection * knockbackForce;
+                Vector2 knockback = playerDirection * knockbackForce * .5f;
                 rb.AddForce(knockback, ForceMode2D.Impulse);
             }
         }

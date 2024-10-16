@@ -10,11 +10,6 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private bool canFire;
     [SerializeField] private float firingTime;
     private float timer;
-    private PlayerInputHandler inputHandler;
-    void Awake()
-    {
-        inputHandler = PlayerInputHandler.Instance;
-    }
 
     // Update is called once per frame
     void Update()

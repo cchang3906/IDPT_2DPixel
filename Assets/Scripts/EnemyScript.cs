@@ -10,10 +10,13 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] private int knockbackForce;
     [SerializeField] public bool aggro;
     [SerializeField] private float walkSpeed;
+    [SerializeField] private float attentionSpan;
     private GameObject player;
     private Rigidbody2D rb;
     private PlayerControl playerControl;
-    private Vector3 lastSeenPlayerPos;
+    private Vector3 targetPos;
+    private Vector3 startPos;
+    private float timer;
     NavMeshAgent agent;
     private enum State
     {
@@ -28,13 +31,14 @@ public class EnemyScript : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("PlayerHitbox");
         state = State.frozen;
         agent = GetComponent<NavMeshAgent>();
+        startPos = transform.position;
     }
     private void Start()
     {
         playerControl = PlayerControl.Instance;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
-        lastSeenPlayerPos = transform.position;
+        targetPos = transform.position;
     }
 
     // Update is called once per frame
@@ -45,9 +49,33 @@ public class EnemyScript : MonoBehaviour
             default:
             case State.frozen:
                 agent.SetDestination(transform.position);
+                if (timer <= 0)
+                {
+                    timer = attentionSpan;
+                }
                 break;
             case State.aggro:
-                agent.SetDestination(lastSeenPlayerPos);
+                agent.SetDestination(targetPos);
+                FaceTarget();
+                // Check if we've reached the destination
+                if (!agent.pathPending)
+                {
+                    if (agent.remainingDistance <= agent.stoppingDistance)
+                    {
+                        if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                        {
+                            // Done
+                            timer -= Time.deltaTime;
+                            //transform.rotation =
+                            Debug.Log(timer);
+                            if (timer <= 0)
+                            {
+                                targetPos = startPos;
+                                timer = attentionSpan;
+                            }
+                        }
+                    }
+                }
                 break;
             case State.dead:
                 Destroy(gameObject);
@@ -85,7 +113,7 @@ public class EnemyScript : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.tag == "WideSpotlight" || collision.tag == "NarrowSpotlight" || collision.tag == "NearSpotlight")
+        if ((collision.tag == "WideSpotlight" || collision.tag == "NarrowSpotlight" || collision.tag == "NearSpotlight") && state == State.frozen)
         {
             state = State.aggro;
         }
@@ -107,7 +135,7 @@ public class EnemyScript : MonoBehaviour
             if (state == State.aggro)
             {
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
-                lastSeenPlayerPos = player.transform.position;
+                targetPos = player.transform.position;
             }
             else
             {
@@ -119,5 +147,18 @@ public class EnemyScript : MonoBehaviour
     public string returnState()
     {
         return state.ToString();
+    }
+    private void FaceTarget()
+    {
+        var vel = agent.velocity;
+        vel.z = 0;
+
+        if (vel != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(
+                                    Vector3.forward,
+                                    vel
+            );
+        }
     }
 }

@@ -5424,10 +5424,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 367a82642e0654a028b3a2291cf839a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerHealth: 50
+  playerHealth: 35
   walkSpeed: 4
   dashSpeed: 30
-  dashDuration: 0.1
+  dashDuration: 0.05
   mainCamera: {fileID: 519420031}
   shakeDuration: 0.2
   testShake: 0
@@ -5477,6 +5477,7 @@ MonoBehaviour:
   staminaRecovery: 30
   dashStamina: 35
   bulletCount: 0
+  iFrameDuration: 0.05
   swordDmg: 35
 --- !u!212 &1417260197
 SpriteRenderer:
@@ -5776,6 +5777,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1717938061}
     m_Modifications:
     - target: {fileID: 8296209568741596339, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
+      propertyPath: attentionSpan
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296209568741596339, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
       propertyPath: knockbackForce
       value: 15
       objectReference: {fileID: 0}
@@ -5822,6 +5827,18 @@ PrefabInstance:
     - target: {fileID: 8296209568741596342, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296209568741596343, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296209568741596343, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296209568741596343, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8296209568741596344, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
       propertyPath: m_Name
@@ -5879,6 +5896,18 @@ PrefabInstance:
     - target: {fileID: 8296209568741596342, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296209568741596343, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296209568741596343, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8296209568741596343, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8296209568741596344, guid: 33047b496fded42df9dd7cb614ad8053, type: 3}
       propertyPath: m_Name

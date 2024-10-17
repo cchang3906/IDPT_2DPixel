@@ -19,6 +19,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
     [SerializeField] public int bulletCount;
+    [SerializeField] private float iFrameDuration;
     private PlayerKnockback playerKnockback;
     public int swordDmg;
     private Vector3 clampedCameraPosition;
@@ -175,11 +176,12 @@ public class PlayerControl : MonoBehaviour
 
     private IEnumerator Dash()
     {
-        playerKnockback.invincible = true;
         rb.velocity = new Vector2(movementInput.x * dashSpeed, movementInput.y * dashSpeed);
+        playerKnockback.invincible = true;
+        yield return new WaitForSeconds(iFrameDuration);
+        playerKnockback.invincible = false;
         yield return new WaitForSeconds(dashDuration);
         rb.velocity = new Vector2(smoothMovement.x, smoothMovement.y);
         isDashing = false;
-        playerKnockback.invincible = false;
     }
 }

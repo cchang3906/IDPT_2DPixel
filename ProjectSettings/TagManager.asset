@@ -22,7 +22,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Light
   - 
   - 
   - 
@@ -66,4 +66,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 2710649009
+    locked: 0
+  - name: Fog
+    uniqueID: 212313999
     locked: 0

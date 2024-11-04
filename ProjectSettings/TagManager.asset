@@ -67,6 +67,9 @@ TagManager:
   - name: Player
     uniqueID: 2710649009
     locked: 0
-  - name: Fog
-    uniqueID: 212313999
+  - name: CameraSortingLayer
+    uniqueID: 1410524497
+    locked: 0
+  - name: Darkness
+    uniqueID: 1229768141
     locked: 0

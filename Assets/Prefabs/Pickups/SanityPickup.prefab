@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5126808088092409194}
   - component: {fileID: 5126808088092409192}
   - component: {fileID: 5126808088092409195}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: SanityPickup
   m_TagString: Untagged
   m_Icon: {fileID: 0}

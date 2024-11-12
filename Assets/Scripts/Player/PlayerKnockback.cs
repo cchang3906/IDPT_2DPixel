@@ -11,16 +11,11 @@ public class PlayerKnockback : MonoBehaviour
     [SerializeField] private int baseEnemyDmg;
     public bool invincible;
     private GameObject player;
-    private PlayerControl playerControl;
     private Rigidbody2D rb;
     void Awake()
     {
         player = GameObject.FindGameObjectWithTag("Player");
         rb = player.GetComponent<Rigidbody2D>();
-    }
-    private void Start()
-    {
-        playerControl = PlayerControl.Instance;
     }
 
     // Update is called once per frame
@@ -35,18 +30,18 @@ public class PlayerKnockback : MonoBehaviour
             Vector2 enemyDirection = (transform.position - collision.transform.position).normalized;
             Vector2 knockback = enemyDirection * knockbackForce;
             rb.AddForce(knockback, ForceMode2D.Impulse);
-            playerControl.TakeDamage(baseEnemyDmg);
+            PlayerControl.Instance.TakeDamage(baseEnemyDmg);
             //rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
             //Debug.Log(knockback);
         }
         else if (collision.tag == "BulletPickup")
         {
-            playerControl.bulletCount += bullets;
+            PlayerControl.Instance.bulletCount += bullets;
             Destroy(collision.gameObject);
         }
         else if (collision.tag == "HealthPickup")
         {
-            playerControl.playerHealth += healing;
+            PlayerControl.Instance.playerHealth += healing;
             Destroy(collision.gameObject);
         }
     }

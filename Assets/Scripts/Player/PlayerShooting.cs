@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 
 public class PlayerShooting : MonoBehaviour
 {
-    public int bulletCount;
     [SerializeField] private GameObject bullet;
     [SerializeField] private bool canFire;
     [SerializeField] private float firingTime;
@@ -31,10 +30,10 @@ public class PlayerShooting : MonoBehaviour
     public void OnAttack(InputValue inputValue)
     {
         //Debug.Log("fired");
-        if (canFire && bulletCount > 0)
+        if (canFire && PlayerControl.Instance.bulletCount > 0)
         {
             canFire = false;
-            bulletCount -= 1;
+            PlayerControl.Instance.bulletCount -= 1;
             Instantiate(bullet, transform.position, Quaternion.identity);
         }
     }

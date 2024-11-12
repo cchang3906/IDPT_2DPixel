@@ -12,26 +12,20 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] private float walkSpeed;
     [SerializeField] private float attentionSpan;
     private GameObject player;
+    private TimeStateMachineScript stateMachineScript;
     private Rigidbody2D rb;
     private PlayerControl playerControl;
     private Vector3 targetPos;
     private Vector3 startPos;
     private float timer;
     NavMeshAgent agent;
-    private enum State
-    {
-        aggro,
-        frozen,
-        dead,
-    }
-    private State state;
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.FindGameObjectWithTag("PlayerHitbox");
-        state = State.frozen;
         agent = GetComponent<NavMeshAgent>();
         startPos = transform.position;
+        stateMachineScript = GetComponent<TimeStateMachineScript>();
     }
     private void Start()
     {
@@ -44,19 +38,17 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch (state)
+        FaceTarget();
+        if (stateMachineScript.returnState() == "frozen")
         {
-            default:
-            case State.frozen:
-                agent.SetDestination(transform.position);
-                if (timer <= 0)
-                {
-                    timer = attentionSpan;
-                }
-                break;
-            case State.aggro:
+            agent.SetDestination(transform.position);
+            if (timer <= 0)
+            {
+                timer = attentionSpan;
+            }
+        }
+        else if (stateMachineScript.returnState() == "flowing")
                 agent.SetDestination(targetPos);
-                FaceTarget();
                 // Check if we've reached the destination
                 if (!agent.pathPending)
                 {
@@ -76,10 +68,9 @@ public class EnemyScript : MonoBehaviour
                         }
                     }
                 }
-                break;
-            case State.dead:
-                Destroy(gameObject);
-                break;
+        else if (stateMachineScript.returnState() == "dead")
+        {
+            Destroy(gameObject);
         }
         //Debug.Log(state);
     }
@@ -89,41 +80,28 @@ public class EnemyScript : MonoBehaviour
         enemyHealth -= damage;
         if (enemyHealth <= 0)
         {
-            state = State.dead;
+            stateMachineScript.state = TimeStateMachineScript.State.dead;
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (state == State.aggro)
+        if (stateMachineScript.returnState() == "flowing")
         {
-            if (collision.tag == "Sword")
+            if (collision.CompareTag("Sword"))
             {
                 Vector2 playerDirection = (transform.position - collision.transform.position).normalized;
                 Vector2 knockback = playerDirection * knockbackForce;
                 rb.AddForce(knockback, ForceMode2D.Impulse);
                 TakeDamage(playerControl.swordDmg);
+                
             }
-            else if (collision.tag == "PlayerHitbox")
+            else if (collision.CompareTag("PlayerHitbox"))
             {
                 Vector2 playerDirection = (transform.position - collision.transform.position).normalized;
                 Vector2 knockback = playerDirection * knockbackForce * .5f;
                 rb.AddForce(knockback, ForceMode2D.Impulse);
+                Debug.Log(collision.tag);
             }
-        }
-    }
-    private void OnTriggerStay2D(Collider2D collision)
-    {
-        if ((collision.tag == "WideSpotlight" || collision.tag == "NarrowSpotlight" || collision.tag == "NearSpotlight") && state == State.frozen)
-        {
-            state = State.aggro;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.tag == "WideSpotlight" || collision.tag == "NarrowSpotlight" || collision.tag == "NearSpotlight")
-        {
-            state = State.frozen;
         }
     }
     private void FixedUpdate()
@@ -132,7 +110,7 @@ public class EnemyScript : MonoBehaviour
         RaycastHit2D ray = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 20f, layerMask);
         if (ray.collider != null && ray.collider.CompareTag("PlayerHitbox"))
         {
-            if (state == State.aggro)
+            if (stateMachineScript.returnState() == "flowing")
             {
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
                 targetPos = player.transform.position;
@@ -142,11 +120,6 @@ public class EnemyScript : MonoBehaviour
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);
             }
         }
-    }
-
-    public string returnState()
-    {
-        return state.ToString();
     }
     private void FaceTarget()
     {

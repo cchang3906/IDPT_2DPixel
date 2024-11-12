@@ -56,7 +56,6 @@ public class PlayerControl : MonoBehaviour
         gun = GameObject.FindGameObjectWithTag("Gun");
         sword = GameObject.FindGameObjectWithTag("SwordPivot");
         shootingScript = gun.GetComponent<PlayerShooting>();
-        bulletCount = shootingScript.bulletCount;
         narrowSpot = GameObject.FindGameObjectWithTag("NarrowSpotlight");
         wideSpot = GameObject.FindGameObjectWithTag("WideSpotlight");
         playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();
@@ -92,7 +91,6 @@ public class PlayerControl : MonoBehaviour
         }
         if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage)
         {
-            bulletCount = shootingScript.bulletCount;
             //Debug.Log(bulletCount);
             StartCoroutine(Shake());
             takenDamage = false;

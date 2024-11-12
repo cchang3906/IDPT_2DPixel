@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5334491492673952326}
   - component: {fileID: 5334491492673952323}
   - component: {fileID: 5334491492673952320}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: BulletPickup
   m_TagString: BulletPickup
   m_Icon: {fileID: 0}
@@ -26,7 +26,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5334491492673952327}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.22418404, y: -0.13508373, z: 0.07213636}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0

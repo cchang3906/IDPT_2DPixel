@@ -5,13 +5,14 @@ using UnityEngine;
 public class BlurControlScript : MonoBehaviour
 {
     [SerializeField] Material blurMat;
+    [SerializeField] private float blurRate;
     public static BlurControlScript Instance;
 
     private float blurAmount = 0f;
     private void Update()
     {
         ChangeBlur(blurAmount);
-        blurAmount += 0.00001f;
+        blurAmount += blurRate;
     }
     private void ChangeBlur(float alpha)
     {

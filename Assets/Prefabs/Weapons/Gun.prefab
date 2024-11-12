@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8837542923185358685}
   - component: {fileID: 8837542923185358686}
   - component: {fileID: 8837542923185358687}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Gun
   m_TagString: Gun
   m_Icon: {fileID: 0}
@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f064fbde16001f41a1a6aa529795611, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletCount: 10
   bullet: {fileID: 746768868730494922, guid: 180de13485590a348b6df41714fd86d4, type: 3}
   canFire: 0
   firingTime: 0.25
@@ -90,7 +89,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8837542924717678939}
   - component: {fileID: 8837542924717678948}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: GunSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,9 +149,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingLayerID: -1584318287
+  m_SortingLayer: 2
+  m_SortingOrder: -1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

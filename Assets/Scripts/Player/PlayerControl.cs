@@ -23,7 +23,7 @@ public class PlayerControl : MonoBehaviour
     private PlayerKnockback playerKnockback;
     public int swordDmg;
     private Vector3 clampedCameraPosition;
-    private bool takenDamage;
+    public bool takenDamage;
     private GameObject narrowSpot;
     private GameObject wideSpot;
     private bool isDashing;
@@ -36,7 +36,6 @@ public class PlayerControl : MonoBehaviour
     private Vector2 smoothMovement;
     private Vector2 smoothVelocity;
     private Vector2 mousePosition;
-    private PlayerShooting shootingScript;
     public static PlayerControl Instance
     {
         get;
@@ -55,7 +54,6 @@ public class PlayerControl : MonoBehaviour
         inputHandler = PlayerInputHandler.Instance;
         gun = GameObject.FindGameObjectWithTag("Gun");
         sword = GameObject.FindGameObjectWithTag("SwordPivot");
-        shootingScript = gun.GetComponent<PlayerShooting>();
         narrowSpot = GameObject.FindGameObjectWithTag("NarrowSpotlight");
         wideSpot = GameObject.FindGameObjectWithTag("WideSpotlight");
         playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();

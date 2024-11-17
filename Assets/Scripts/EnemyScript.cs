@@ -11,6 +11,8 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] public bool aggro;
     [SerializeField] private float walkSpeed;
     [SerializeField] private float attentionSpan;
+    private RoamBetweenScript roamScript;
+    private bool isRoaming;
     private GameObject player;
     private TimeStateMachineScript stateMachineScript;
     private Rigidbody2D rb;
@@ -26,6 +28,7 @@ public class EnemyScript : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         startPos = transform.position;
         stateMachineScript = GetComponent<TimeStateMachineScript>();
+        roamScript = GetComponent<RoamBetweenScript>();
     }
     private void Start()
     {
@@ -33,6 +36,7 @@ public class EnemyScript : MonoBehaviour
         agent.updateRotation = false;
         agent.updateUpAxis = false;
         targetPos = transform.position;
+        stateMachineScript.state = TimeStateMachineScript.State.frozen;
     }
 
     // Update is called once per frame
@@ -48,26 +52,39 @@ public class EnemyScript : MonoBehaviour
             }
         }
         else if (stateMachineScript.returnState() == "flowing")
-                agent.SetDestination(targetPos);
-                // Check if we've reached the destination
-                if (!agent.pathPending)
+        {
+            agent.SetDestination(targetPos);
+            if (isRoaming)
+            {
+                if (CheckPendingPath())
                 {
-                    if (agent.remainingDistance <= agent.stoppingDistance)
+                    targetPos = roamScript.returnRoamingPos();
+                    Debug.Log("roaming");
+                }
+                else
+                {
+                    targetPos = startPos;
+                    Debug.Log("returning");
+                }
+            }
+            else
+            {
+                // Check if we've reached the destination
+                Debug.Log("not roaming");
+                if (CheckPendingPath())
+                {
+                    // Done
+                    timer -= Time.deltaTime;
+                    //transform.rotation =
+                    if (timer <= 0)
                     {
-                        if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                        {
-                            // Done
-                            timer -= Time.deltaTime;
-                            //transform.rotation =
-                            Debug.Log(timer);
-                            if (timer <= 0)
-                            {
-                                targetPos = startPos;
-                                timer = attentionSpan;
-                            }
-                        }
+                        targetPos = startPos;
+                        timer = attentionSpan;
                     }
                 }
+            }
+        }
+            
         else if (stateMachineScript.returnState() == "dead")
         {
             Destroy(gameObject);
@@ -100,7 +117,6 @@ public class EnemyScript : MonoBehaviour
                 Vector2 playerDirection = (transform.position - collision.transform.position).normalized;
                 Vector2 knockback = playerDirection * knockbackForce * .5f;
                 rb.AddForce(knockback, ForceMode2D.Impulse);
-                Debug.Log(collision.tag);
             }
         }
     }
@@ -112,12 +128,20 @@ public class EnemyScript : MonoBehaviour
         {
             if (stateMachineScript.returnState() == "flowing")
             {
+                isRoaming = false;
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
                 targetPos = player.transform.position;
             }
             else
             {
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);
+            }
+        }
+        else
+        {
+            if(stateMachineScript.returnState() == "flowing" && transform.position  startPos) // check if transform position is close to startPos not exactly the same
+            {
+                isRoaming = true;
             }
         }
     }
@@ -133,5 +157,20 @@ public class EnemyScript : MonoBehaviour
                                     vel
             );
         }
+    }
+
+    private bool CheckPendingPath()
+    {
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
+            {
+                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

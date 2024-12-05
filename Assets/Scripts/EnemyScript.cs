@@ -9,17 +9,20 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] private int enemyHealth;
     [SerializeField] private int knockbackForce;
     [SerializeField] public bool aggro;
-    [SerializeField] private float walkSpeed;
+    [SerializeField] private float runSpeed;
     [SerializeField] private float attentionSpan;
     private RoamBetweenScript roamScript;
-    private bool isRoaming;
+    [SerializeField] private bool isRoaming;
+    [SerializeField] private bool willRoam;
     private GameObject player;
+    private float walkSpeed;
     private TimeStateMachineScript stateMachineScript;
     private Rigidbody2D rb;
     private PlayerControl playerControl;
     private Vector3 targetPos;
     private Vector3 startPos;
     private float timer;
+    private bool roamingState;
     NavMeshAgent agent;
     void Awake()
     {
@@ -29,6 +32,11 @@ public class EnemyScript : MonoBehaviour
         startPos = transform.position;
         stateMachineScript = GetComponent<TimeStateMachineScript>();
         roamScript = GetComponent<RoamBetweenScript>();
+        if (willRoam)
+        {
+            isRoaming = roamScript.isRoaming;
+        }
+        
     }
     private void Start()
     {
@@ -37,6 +45,7 @@ public class EnemyScript : MonoBehaviour
         agent.updateUpAxis = false;
         targetPos = transform.position;
         stateMachineScript.state = TimeStateMachineScript.State.frozen;
+        walkSpeed = runSpeed / 2;
     }
 
     // Update is called once per frame
@@ -54,23 +63,15 @@ public class EnemyScript : MonoBehaviour
         else if (stateMachineScript.returnState() == "flowing")
         {
             agent.SetDestination(targetPos);
-            if (isRoaming)
+            if (willRoam && isRoaming)
             {
-                if (CheckPendingPath())
-                {
-                    targetPos = roamScript.returnRoamingPos();
-                    Debug.Log("roaming");
-                }
-                else
-                {
-                    targetPos = startPos;
-                    Debug.Log("returning");
-                }
+                agent.speed = walkSpeed;
+                Roaming();
             }
             else
             {
                 // Check if we've reached the destination
-                Debug.Log("not roaming");
+                agent.speed = runSpeed;
                 if (CheckPendingPath())
                 {
                     // Done
@@ -100,6 +101,23 @@ public class EnemyScript : MonoBehaviour
             stateMachineScript.state = TimeStateMachineScript.State.dead;
         }
     }
+    private void Roaming()
+    {
+        if (Vector2.Distance(transform.position, targetPos) <= 1)
+        {
+            roamingState = !roamingState;
+        }
+        if (roamingState)   // roamingState = false means its returning
+        {
+            targetPos = roamScript.returnRoamingPos();
+        }
+        else
+        {
+            targetPos = startPos;
+
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (stateMachineScript.returnState() == "flowing")
@@ -137,9 +155,9 @@ public class EnemyScript : MonoBehaviour
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);
             }
         }
-        else
+        else if (ray.collider != null)
         {
-            if(stateMachineScript.returnState() == "flowing" && transform.position  startPos) // check if transform position is close to startPos not exactly the same
+            if(stateMachineScript.returnState() == "flowing")
             {
                 isRoaming = true;
             }

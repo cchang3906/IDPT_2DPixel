@@ -14,8 +14,9 @@ GameObject:
   - component: {fileID: 8296209568741596338}
   - component: {fileID: 1411667289}
   - component: {fileID: 438536577}
+  - component: {fileID: 3014639098928544399}
   m_Layer: 2
-  m_Name: Enemy
+  m_Name: EnemyStatic
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -103,8 +104,10 @@ MonoBehaviour:
   enemyHealth: 100
   knockbackForce: 15
   aggro: 0
-  walkSpeed: 0.5
+  runSpeed: 6
   attentionSpan: 2
+  isRoaming: 0
+  willRoam: 0
 --- !u!50 &8296209568741596338
 Rigidbody2D:
   serializedVersion: 4
@@ -176,3 +179,16 @@ PolygonCollider2D:
     - - {x: 0, y: 0.5773587}
       - {x: -0.5, y: -0.28866667}
       - {x: 0.5, y: -0.28866667}
+--- !u!114 &3014639098928544399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8296209568741596344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32baa02c632cf4d73ab11b97c758de7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0

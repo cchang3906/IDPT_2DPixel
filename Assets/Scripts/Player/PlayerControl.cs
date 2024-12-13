@@ -54,8 +54,8 @@ public class PlayerControl : MonoBehaviour
         inputHandler = PlayerInputHandler.Instance;
         gun = GameObject.FindGameObjectWithTag("Gun");
         sword = GameObject.FindGameObjectWithTag("SwordPivot");
-        narrowSpot = GameObject.FindGameObjectWithTag("NarrowSpotlight");
-        wideSpot = GameObject.FindGameObjectWithTag("WideSpotlight");
+        narrowSpot = GameObject.Find("PlayerNarrow");
+        wideSpot = GameObject.Find("PlayerWide");
         playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();
     }
     void Start()

@@ -41,7 +41,7 @@ public class TimeStateMachineScript: MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if ((collision.CompareTag("WideSpotlight") || collision.CompareTag("NarrowSpotlight") || collision.CompareTag("NearSpotlight")) && state == State.frozen)
+        if (collision.CompareTag("Spotlight") && state == State.frozen)
         {
             state = State.flowing;
             rb.velocity = currVelocity;
@@ -50,7 +50,7 @@ public class TimeStateMachineScript: MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("WideSpotlight") || collision.CompareTag("NarrowSpotlight") || collision.CompareTag("NearSpotlight"))
+        if (collision.CompareTag("Spotlight"))
         {
             state = State.frozen;
             currVelocity = rb.velocity;

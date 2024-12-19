@@ -13,6 +13,7 @@ TagManager:
   - BulletPickup
   - Door
   - Spotlight
+  - Goal
   layers:
   - Default
   - TransparentFX

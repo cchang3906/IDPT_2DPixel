@@ -21,6 +21,7 @@ public class DoorScript : MonoBehaviour
         if (open)
         {
             anim.SetTrigger("Open");
+            StartCoroutine(Sleep(.5f));
             Color objectColor = lamp.GetComponent<Renderer>().material.color;
             float fadeAmount = objectColor.a - fadeSpeed * Time.deltaTime;
             objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
@@ -31,6 +32,11 @@ public class DoorScript : MonoBehaviour
                 open = false;
             }
         }
+    }
+
+    IEnumerator Sleep(float time)
+    {
+        yield return new WaitForSeconds(time);
     }
 }
 

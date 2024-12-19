@@ -12,17 +12,16 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float dashSpeed = 10f;
     [SerializeField] private float dashDuration = 1f;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private float shakeDuration;
-    [SerializeField] private bool testShake;
-    [SerializeField] private AnimationCurve curve;
     [SerializeField] private float stamina = 100f;
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
     [SerializeField] public int bulletCount;
     [SerializeField] private float iFrameDuration;
+    private CameraControlScript cameraControl;
+    public bool inFear;
+    private Vector2 mousePosition;
     private PlayerKnockback playerKnockback;
     public int swordDmg;
-    private Vector3 clampedCameraPosition;
     public bool takenDamage;
     private GameObject narrowSpot;
     private GameObject wideSpot;
@@ -35,7 +34,8 @@ public class PlayerControl : MonoBehaviour
     private Vector2 lookInput;
     private Vector2 smoothMovement;
     private Vector2 smoothVelocity;
-    private Vector2 mousePosition;
+    private GameObject narrowSpotMask;
+    private GameObject wideSpotMask;
     public static PlayerControl Instance
     {
         get;
@@ -56,7 +56,10 @@ public class PlayerControl : MonoBehaviour
         sword = GameObject.FindGameObjectWithTag("SwordPivot");
         narrowSpot = GameObject.Find("PlayerNarrow");
         wideSpot = GameObject.Find("PlayerWide");
+        narrowSpotMask = narrowSpot.transform.GetChild(0).gameObject;
+        wideSpotMask = narrowSpot.transform.GetChild(0).gameObject;
         playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();
+        cameraControl = mainCamera.GetComponent<CameraControlScript>();
     }
     void Start()
     {
@@ -68,6 +71,10 @@ public class PlayerControl : MonoBehaviour
     void Update()
     {
         //rb.AddForce(new Vector2(100, 100));
+        if (inFear)
+        {
+
+        }
         if (playerHealth <= 0)
         {
             Destroy(gameObject);
@@ -87,11 +94,12 @@ public class PlayerControl : MonoBehaviour
             narrowSpot.SetActive(false);
             wideSpot.SetActive(true);
         }
-        if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage)
+        if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage || cameraControl.testShake)
         {
             //Debug.Log(bulletCount);
-            StartCoroutine(Shake());
+            StartCoroutine(cameraControl.Shake());
             takenDamage = false;
+            cameraControl.testShake = false;
         }
         HandleRotation();
         HandleMovement();
@@ -125,28 +133,12 @@ public class PlayerControl : MonoBehaviour
     {
         mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
         transform.up = mousePosition - new Vector2(transform.position.x, transform.position.y);
-        Vector3 cameraPosition = new Vector3((transform.position.x + mousePosition.x) / 2, (transform.position.y + mousePosition.y) / 2, -10);
-        float clampedX = Mathf.Clamp(cameraPosition.x, transform.position.x - 5, transform.position.x + 5);
-        float clampedY = Mathf.Clamp(cameraPosition.y, transform.position.y - 3, transform.position.y + 3);
-        clampedCameraPosition = new Vector3(clampedX, clampedY, -10);
-        mainCamera.transform.position = clampedCameraPosition;
-
+        cameraControl.HandleCameraRotation(lookInput);
         //var dir = new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane) - mainCamera.ScreenToWorldPoint(transform.position);
         //float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         //Debug.Log(lookInput);
         //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
-    }
-    IEnumerator Shake()
-    {
-        float timer = 0f;
-        while (timer < shakeDuration)
-        {
-            timer += Time.deltaTime;
-            float strength = curve.Evaluate(timer / shakeDuration);
-            mainCamera.transform.position =  clampedCameraPosition + Random.insideUnitSphere * strength;
-            yield return null;
-        }
     }
     public void OnMove(InputValue inputValue)
     {

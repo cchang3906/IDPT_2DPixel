@@ -5,7 +5,7 @@ using UnityEngine.UIElements.Experimental;
 
 public class KeyScript : MonoBehaviour
 {
-    public int keyID;
+    [SerializeField] private int keyID;
     private GameObject[] doors;
     private GameObject matchingDoor;
     // Start is called before the first frame update

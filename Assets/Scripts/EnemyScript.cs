@@ -55,6 +55,7 @@ public class EnemyScript : MonoBehaviour
         if (stateMachineScript.returnState() == "frozen")
         {
             agent.SetDestination(transform.position);
+            playerControl.inFear = false;
             if (timer <= 0)
             {
                 timer = attentionSpan;
@@ -67,6 +68,7 @@ public class EnemyScript : MonoBehaviour
             {
                 agent.speed = walkSpeed;
                 Roaming();
+                playerControl.inFear = false;
             }
             else
             {
@@ -149,10 +151,12 @@ public class EnemyScript : MonoBehaviour
                 isRoaming = false;
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
                 targetPos = player.transform.position;
+                playerControl.inFear = true;
             }
             else
             {
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);
+                playerControl.inFear = false;
             }
         }
         else if (ray.collider != null)

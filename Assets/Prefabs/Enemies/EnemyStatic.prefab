@@ -108,6 +108,7 @@ MonoBehaviour:
   attentionSpan: 2
   isRoaming: 0
   willRoam: 0
+  damage: 30
 --- !u!50 &8296209568741596338
 Rigidbody2D:
   serializedVersion: 4
@@ -140,7 +141,7 @@ NavMeshAgent:
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
-  m_Acceleration: 8
+  m_Acceleration: 6
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0

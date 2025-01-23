@@ -8,7 +8,6 @@ public class PlayerKnockback : MonoBehaviour
     [SerializeField] private float knockbackForce = 10f;
     [SerializeField] private int bullets = 5;
     [SerializeField] private int healing = 30;
-    [SerializeField] private int baseEnemyDmg;
     public bool invincible;
     private GameObject player;
     private Rigidbody2D rb;
@@ -18,11 +17,6 @@ public class PlayerKnockback : MonoBehaviour
         rb = player.GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!invincible && collision.tag == "Enemy")
@@ -30,7 +24,7 @@ public class PlayerKnockback : MonoBehaviour
             Vector2 enemyDirection = (transform.position - collision.transform.position).normalized;
             Vector2 knockback = enemyDirection * knockbackForce;
             rb.AddForce(knockback, ForceMode2D.Impulse);
-            PlayerControl.Instance.TakeDamage(baseEnemyDmg);
+            
             //rb.AddForce(new Vector2(0, 10), ForceMode2D.Impulse);
             //Debug.Log(knockback);
         }

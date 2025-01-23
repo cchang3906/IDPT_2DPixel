@@ -10,6 +10,10 @@ public class CameraControlScript : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [SerializeField] private AnimationCurve curve;
     [SerializeField] private float shakeDuration;
+    [SerializeField] private float originalSize = 6f;
+    [SerializeField] private float zoomFactor;
+    [SerializeField] private float zoomSpeed;
+    private FlickerControlScript flickerControl;
     public bool testShake;
     private Vector3 playerPosition;
     private Vector3 clampedCameraPosition;
@@ -21,12 +25,30 @@ public class CameraControlScript : MonoBehaviour
         Player = GameObject.FindGameObjectWithTag("Player");
         goalPosition = GameObject.FindGameObjectWithTag("Goal").transform.position;
         cameraWidth = mainCamera.orthographicSize * 2f * mainCamera.aspect;
+        flickerControl = Player.transform.GetChild(0).GetComponent<FlickerControlScript>();
     }
 
     // Update is called once per frame
     void Update()
     {
         playerPosition = Player.transform.position;
+        if (flickerControl.flickering)
+        {
+            float targetSize = originalSize * zoomFactor;
+            if (targetSize != mainCamera.orthographicSize)
+            {
+                mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize,
+        targetSize, Time.deltaTime * zoomSpeed);
+            }
+        }
+        else
+        {
+            if (originalSize != mainCamera.orthographicSize)
+            {
+                mainCamera.orthographicSize = Mathf.Lerp(originalSize, mainCamera.orthographicSize, Time.deltaTime * zoomSpeed);
+
+            }
+        }
     }
     public void HandleCameraRotation(Vector2 lookInput)
     {

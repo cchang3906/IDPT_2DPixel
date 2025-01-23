@@ -11,12 +11,14 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] public bool aggro;
     [SerializeField] private float runSpeed;
     [SerializeField] private float attentionSpan;
-    private RoamBetweenScript roamScript;
     [SerializeField] private bool isRoaming;
     [SerializeField] private bool willRoam;
+    [SerializeField] private int damage;
+    private RoamBetweenScript roamScript;
     private GameObject player;
     private float walkSpeed;
     private TimeStateMachineScript stateMachineScript;
+    private FlickerControlScript flickerControl;
     private Rigidbody2D rb;
     private PlayerControl playerControl;
     private Vector3 targetPos;
@@ -32,9 +34,10 @@ public class EnemyScript : MonoBehaviour
         startPos = transform.position;
         stateMachineScript = GetComponent<TimeStateMachineScript>();
         roamScript = GetComponent<RoamBetweenScript>();
+        flickerControl = GameObject.FindGameObjectWithTag("Player").transform.GetChild(0).GetComponent<FlickerControlScript>();
         if (willRoam)
         {
-            isRoaming = roamScript.isRoaming;
+            isRoaming = true;
         }
         
     }
@@ -46,6 +49,7 @@ public class EnemyScript : MonoBehaviour
         targetPos = transform.position;
         stateMachineScript.state = TimeStateMachineScript.State.frozen;
         walkSpeed = runSpeed / 2;
+        flickerControl.FlickeringOff();
     }
 
     // Update is called once per frame
@@ -55,7 +59,6 @@ public class EnemyScript : MonoBehaviour
         if (stateMachineScript.returnState() == "frozen")
         {
             agent.SetDestination(transform.position);
-            playerControl.inFear = false;
             if (timer <= 0)
             {
                 timer = attentionSpan;
@@ -68,7 +71,6 @@ public class EnemyScript : MonoBehaviour
             {
                 agent.speed = walkSpeed;
                 Roaming();
-                playerControl.inFear = false;
             }
             else
             {
@@ -78,7 +80,6 @@ public class EnemyScript : MonoBehaviour
                 {
                     // Done
                     timer -= Time.deltaTime;
-                    //transform.rotation =
                     if (timer <= 0)
                     {
                         targetPos = startPos;
@@ -137,11 +138,13 @@ public class EnemyScript : MonoBehaviour
                 Vector2 playerDirection = (transform.position - collision.transform.position).normalized;
                 Vector2 knockback = playerDirection * knockbackForce * .5f;
                 rb.AddForce(knockback, ForceMode2D.Impulse);
+                PlayerControl.Instance.TakeDamage(damage);
             }
         }
     }
     private void FixedUpdate()
     {
+        
         LayerMask layerMask = LayerMask.GetMask("Default");
         RaycastHit2D ray = Physics2D.Raycast(transform.position, player.transform.position - transform.position, 20f, layerMask);
         if (ray.collider != null && ray.collider.CompareTag("PlayerHitbox"))
@@ -151,21 +154,22 @@ public class EnemyScript : MonoBehaviour
                 isRoaming = false;
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
                 targetPos = player.transform.position;
-                playerControl.inFear = true;
+                flickerControl.FlickeringOn();
             }
             else
             {
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);
-                playerControl.inFear = false;
+                flickerControl.FlickeringOff();
             }
         }
         else if (ray.collider != null)
         {
-            if(stateMachineScript.returnState() == "flowing")
+            if (stateMachineScript.returnState() == "flowing")
             {
                 isRoaming = true;
             }
         }
+
     }
     private void FaceTarget()
     {

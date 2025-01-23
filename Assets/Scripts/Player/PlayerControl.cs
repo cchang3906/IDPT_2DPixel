@@ -15,27 +15,23 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float stamina = 100f;
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
-    [SerializeField] public int bulletCount;
     [SerializeField] private float iFrameDuration;
     private CameraControlScript cameraControl;
-    public bool inFear;
     private Vector2 mousePosition;
     private PlayerKnockback playerKnockback;
-    public int swordDmg;
-    public bool takenDamage;
     private GameObject narrowSpot;
     private GameObject wideSpot;
     private bool isDashing;
     private Rigidbody2D rb;
     private GameObject gun;
     private GameObject sword;
-    private PlayerInputHandler inputHandler;
     private Vector2 movementInput;
     private Vector2 lookInput;
     private Vector2 smoothMovement;
     private Vector2 smoothVelocity;
-    private GameObject narrowSpotMask;
-    private GameObject wideSpotMask;
+    public int swordDmg;
+    [HideInInspector] public bool takenDamage;
+    public int bulletCount;
     public static PlayerControl Instance
     {
         get;
@@ -51,13 +47,10 @@ public class PlayerControl : MonoBehaviour
             Destroy(gameObject);
         }
         rb = GetComponent<Rigidbody2D>();
-        inputHandler = PlayerInputHandler.Instance;
         gun = GameObject.FindGameObjectWithTag("Gun");
         sword = GameObject.FindGameObjectWithTag("SwordPivot");
         narrowSpot = GameObject.Find("PlayerNarrow");
         wideSpot = GameObject.Find("PlayerWide");
-        narrowSpotMask = narrowSpot.transform.GetChild(0).gameObject;
-        wideSpotMask = narrowSpot.transform.GetChild(0).gameObject;
         playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();
         cameraControl = mainCamera.GetComponent<CameraControlScript>();
     }
@@ -71,10 +64,6 @@ public class PlayerControl : MonoBehaviour
     void Update()
     {
         //rb.AddForce(new Vector2(100, 100));
-        if (inFear)
-        {
-
-        }
         if (playerHealth <= 0)
         {
             Destroy(gameObject);
@@ -158,8 +147,11 @@ public class PlayerControl : MonoBehaviour
     }
     public void TakeDamage(int damage)
     {
-        playerHealth -= damage;
-        takenDamage = true;
+        if (!playerKnockback.invincible)
+        {
+            playerHealth -= damage;
+            takenDamage = true;
+        }
     }
 
     private IEnumerator Dash()

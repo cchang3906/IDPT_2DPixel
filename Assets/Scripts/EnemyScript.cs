@@ -101,6 +101,7 @@ public class EnemyScript : MonoBehaviour
         enemyHealth -= damage;
         if (enemyHealth <= 0)
         {
+            flickerControl.FlickeringOff();
             stateMachineScript.state = TimeStateMachineScript.State.dead;
         }
     }

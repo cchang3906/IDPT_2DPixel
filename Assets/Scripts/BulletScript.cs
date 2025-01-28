@@ -6,12 +6,16 @@ using UnityEngine.InputSystem;
 public class BulletScript : MonoBehaviour
 {
     [SerializeField] private float bulletSpeed;
+    private PlayerControl playerControl;
+    private int bulletDamage;
     private Rigidbody2D rb;
     private Camera mainCamera;
     private Vector3 mousePos;
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        playerControl = PlayerControl.Instance;
+        bulletDamage = playerControl.bulletDmg;
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
         mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         Vector3 direction = mousePos - transform.position;
@@ -30,7 +34,7 @@ public class BulletScript : MonoBehaviour
             Destroy(gameObject);
             if(other.tag == "Enemy")
             {
-                Destroy(other.gameObject);
+                other.GetComponent<EnemyScript>().TakeDamage(bulletDamage);
             }
         }
     }

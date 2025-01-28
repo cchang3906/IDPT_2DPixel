@@ -7,15 +7,15 @@ using UnityEngine.InputSystem;
 
 public class PlayerControl : MonoBehaviour
 {
-    [SerializeField] public int playerHealth = 100;
+    public int playerHealth = 100;
     [SerializeField] private float walkSpeed = 3f;
     [SerializeField] private float dashSpeed = 10f;
     [SerializeField] private float dashDuration = 1f;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private float stamina = 100f;
+    public float stamina = 100f;
+    [SerializeField] private float staminaCooldown = 1f;
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
-    [SerializeField] private float iFrameDuration;
     private CameraControlScript cameraControl;
     private Vector2 mousePosition;
     private PlayerKnockback playerKnockback;
@@ -29,8 +29,10 @@ public class PlayerControl : MonoBehaviour
     private Vector2 lookInput;
     private Vector2 smoothMovement;
     private Vector2 smoothVelocity;
-    public int swordDmg;
+    private float timer;
     [HideInInspector] public bool takenDamage;
+    public int swordDmg;
+    public int bulletDmg;
     public int bulletCount;
     public static PlayerControl Instance
     {
@@ -97,13 +99,22 @@ public class PlayerControl : MonoBehaviour
     private void FixedUpdate()
     {
         //Debug.Log(stamina);
-        if (isDashing && stamina >= dashStamina)
+        if (isDashing)
         {
             StartCoroutine(Dash());
+            timer = 0f;
         }
-        else if (stamina < 100)
+        else
+        {
+            timer += Time.deltaTime;
+        }
+        if (timer > staminaCooldown && stamina < 100)
         {
             stamina += Time.deltaTime * staminaRecovery;
+            if (stamina > 100)
+            {
+                stamina = 100;
+            }
         }
     }
     private void HandleMovement()
@@ -139,9 +150,9 @@ public class PlayerControl : MonoBehaviour
     }
     public void OnDash(InputValue inputValue)
     {
-        isDashing = true;
-        if (stamina > dashStamina)
+        if (stamina >= dashStamina)
         {
+            isDashing = true;
             stamina -= dashStamina;
         }
     }
@@ -158,9 +169,8 @@ public class PlayerControl : MonoBehaviour
     {
         rb.velocity = new Vector2(movementInput.x * dashSpeed, movementInput.y * dashSpeed);
         playerKnockback.invincible = true;
-        yield return new WaitForSeconds(iFrameDuration);
-        playerKnockback.invincible = false;
         yield return new WaitForSeconds(dashDuration);
+        playerKnockback.invincible = false;
         rb.velocity = new Vector2(smoothMovement.x, smoothMovement.y);
         isDashing = false;
     }

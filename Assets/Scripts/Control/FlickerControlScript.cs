@@ -6,10 +6,21 @@ public class FlickerControlScript : MonoBehaviour
 {
     // Start is called before the first frame update
     [SerializeField] private Animator anim;
-    public bool flickering = true;
+    public bool flickering;
     [SerializeField] private List<string> triggerList;
     [SerializeField] private float minTime, maxTime;
-
+    public static FlickerControlScript Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
     private void Start()
     {
         StartCoroutine(flickerLights());

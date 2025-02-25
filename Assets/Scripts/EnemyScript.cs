@@ -11,9 +11,9 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] public bool aggro;
     [SerializeField] private float runSpeed;
     [SerializeField] private float attentionSpan;
-    [SerializeField] private bool isRoaming;
     [SerializeField] private bool willRoam;
     [SerializeField] private int damage;
+    private bool isRoaming;
     private RoamBetweenScript roamScript;
     private GameObject player;
     private float walkSpeed;

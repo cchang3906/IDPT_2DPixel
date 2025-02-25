@@ -5,7 +5,7 @@ using UnityEngine;
 public class TimeStateMachineScript: MonoBehaviour
 {
     // Start is called before the first frame update
-    private Vector2 currVelocity;
+    private Vector2 currMomentum;
     private Rigidbody2D rb;
     public enum State
     {
@@ -44,7 +44,7 @@ public class TimeStateMachineScript: MonoBehaviour
         if (collision.CompareTag("Spotlight") && state == State.frozen)
         {
             state = State.flowing;
-            rb.velocity = currVelocity;
+            rb.velocity = currMomentum;
         }
     }
 
@@ -53,7 +53,14 @@ public class TimeStateMachineScript: MonoBehaviour
         if (collision.CompareTag("Spotlight"))
         {
             state = State.frozen;
-            currVelocity = rb.velocity;
+            if (rb.velocity.magnitude <= 1)
+            {
+                currMomentum = rb.velocity;
+            }
+            else
+            {
+                currMomentum = rb.velocity / 2;
+            }
             rb.velocity = Vector2.zero;
         }
     }

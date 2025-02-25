@@ -4,6 +4,7 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -34,11 +35,8 @@ public class PlayerControl : MonoBehaviour
     public int swordDmg;
     public int bulletDmg;
     public int bulletCount;
-    public static PlayerControl Instance
-    {
-        get;
-        private set;
-    }
+    public static PlayerControl Instance { get; private set; }
+
     private void Awake(){
         if (Instance == null)
         {
@@ -65,33 +63,9 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //rb.AddForce(new Vector2(100, 100));
-        if (playerHealth <= 0)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            gun.SetActive(true);
-            sword.SetActive(false);
-            narrowSpot.SetActive(true);
-            wideSpot.SetActive(false);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            gun.SetActive(false);
-            sword.SetActive(true);
-            narrowSpot.SetActive(false);
-            wideSpot.SetActive(true);
-        }
-        if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage || cameraControl.testShake)
-        {
-            //Debug.Log(bulletCount);
-            StartCoroutine(cameraControl.Shake());
-            takenDamage = false;
-            cameraControl.testShake = false;
-        }
+        HandleWeapons();
+        HandleCameraShake();
+        HandleDeath();
         HandleRotation();
         HandleMovement();
     }
@@ -117,6 +91,8 @@ public class PlayerControl : MonoBehaviour
             }
         }
     }
+
+
     private void HandleMovement()
     {
         //Vector2 directionToMouse = (mousePosition - rb.position).normalized;
@@ -129,6 +105,41 @@ public class PlayerControl : MonoBehaviour
         }
         //Debug.Log(smoothMovement * walkSpeed);
     }
+    private void HandleCameraShake()
+    {
+        if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage || cameraControl.testShake)
+        {
+            //Debug.Log(bulletCount);
+            StartCoroutine(cameraControl.Shake());
+            takenDamage = false;
+            cameraControl.testShake = false;
+        }
+    }
+    private void HandleWeapons()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            gun.SetActive(true);
+            sword.SetActive(false);
+            narrowSpot.SetActive(true);
+            wideSpot.SetActive(false);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            gun.SetActive(false);
+            sword.SetActive(true);
+            narrowSpot.SetActive(false);
+            wideSpot.SetActive(true);
+        }
+    }
+    private void HandleDeath()
+    {
+        if (playerHealth <= 0)
+        {
+            SceneManager.LoadScene("Tutorial");
+            StartCoroutine(cameraControl.Shake());
+        }
+    }
     private void HandleRotation()
     {
         mousePosition = mainCamera.ScreenToWorldPoint(new Vector3(lookInput.x, lookInput.y, mainCamera.nearClipPlane));
@@ -140,6 +151,17 @@ public class PlayerControl : MonoBehaviour
         //transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
     }
+
+    public void TakeDamage(int damage)
+    {
+        if (!playerKnockback.invincible)
+        {
+            playerHealth -= damage;
+            takenDamage = true;
+        }
+    }
+
+
     public void OnMove(InputValue inputValue)
     {
         movementInput = inputValue.Get<Vector2>();
@@ -156,15 +178,6 @@ public class PlayerControl : MonoBehaviour
             stamina -= dashStamina;
         }
     }
-    public void TakeDamage(int damage)
-    {
-        if (!playerKnockback.invincible)
-        {
-            playerHealth -= damage;
-            takenDamage = true;
-        }
-    }
-
     private IEnumerator Dash()
     {
         rb.velocity = new Vector2(movementInput.x * dashSpeed, movementInput.y * dashSpeed);

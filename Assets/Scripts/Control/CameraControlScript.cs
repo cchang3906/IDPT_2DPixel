@@ -25,7 +25,7 @@ public class CameraControlScript : MonoBehaviour
         Player = GameObject.FindGameObjectWithTag("Player");
         goalPosition = GameObject.FindGameObjectWithTag("Goal").transform.position;
         cameraWidth = mainCamera.orthographicSize * 2f * mainCamera.aspect;
-        flickerControl = Player.transform.GetChild(0).GetComponent<FlickerControlScript>();
+        flickerControl = FlickerControlScript.Instance;
     }
 
     // Update is called once per frame

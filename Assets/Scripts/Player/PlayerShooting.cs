@@ -8,6 +8,9 @@ public class PlayerShooting : MonoBehaviour
     [SerializeField] private GameObject bullet;
     [SerializeField] private bool canFire;
     [SerializeField] private float firingTime;
+    public bool allowButtonHold;
+    public BulletScript bulletType;
+    private bool shooting;
     private float timer;
 
     // Update is called once per frame

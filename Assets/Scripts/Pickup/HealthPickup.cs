@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthPickup : MonoBehaviour
+public class HealthPickup : ItemObject
 {
     [SerializeField] private int healing = 30;
 
@@ -12,15 +12,9 @@ public class HealthPickup : MonoBehaviour
 
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public override void UseItem()
     {
-        if (collision.tag == "PlayerHitbox")
-        {
-            if (PlayerControl.Instance.playerHealth < 100)
-            {
-                PlayerControl.Instance.playerHealth += healing;
-            }
-            Destroy(gameObject);
-        }
+        PlayerControl.Instance.playerHealth += healing;
+        base.UseItem();
     }
 }

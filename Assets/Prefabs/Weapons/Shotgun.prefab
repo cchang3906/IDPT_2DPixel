@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8837542923185358686}
   - component: {fileID: 8837542923185358687}
   m_Layer: 2
-  m_Name: Gun
+  m_Name: Shotgun
   m_TagString: Gun
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bullet: {fileID: 746768868730494922, guid: 180de13485590a348b6df41714fd86d4, type: 3}
   canFire: 0
-  firingTime: 0.25
+  firingTime: 1
 --- !u!114 &8837542923185358687
 MonoBehaviour:
   m_ObjectHideFlags: 0

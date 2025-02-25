@@ -102,11 +102,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyHealth: 100
-  knockbackForce: 30
+  knockbackForce: 25
   aggro: 0
   runSpeed: 6
   attentionSpan: 2
-  isRoaming: 0
   willRoam: 0
   damage: 30
 --- !u!50 &8296209568741596338

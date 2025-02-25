@@ -6,37 +6,31 @@ public class DoorScript : MonoBehaviour
 {
     // Start is called before the first frame update
     public int doorID;
-    public bool open;
-    private GameObject lamp;
     [SerializeField] private Animator anim;
-    [SerializeField] private float fadeSpeed = 0.5f;
+    public bool open;
     void Start()
     {
-        lamp = transform.GetChild(0).gameObject;
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Vector2.Distance(PlayerControl.Instance.transform.position, transform.position) <= 2 && Input.GetKeyDown(KeyCode.E))
+        {
+            InventorySystemScript.InventoryItem matchingKey = InventorySystemScript.instance.inventoryList.Find(item => item.data.stackable == false && item.instanceID == doorID);
+            //Debug.Log(matchingKey);
+            if (matchingKey != null)
+            {
+                InventorySystemScript.instance.Remove(matchingKey.data, matchingKey.instanceID);
+                open = true;
+            }
+        }
         if (open)
         {
             anim.SetTrigger("Open");
-            StartCoroutine(Sleep(.5f));
-            Color objectColor = lamp.GetComponent<Renderer>().material.color;
-            float fadeAmount = objectColor.a - fadeSpeed * Time.deltaTime;
-            objectColor = new Color(objectColor.r, objectColor.g, objectColor.b, fadeAmount);
-            lamp.GetComponent<Renderer>().material.color = objectColor;
-            if(objectColor.a <= 0)
-            {
-                Destroy(lamp);
-                open = false;
-            }
+            open = false;
         }
-    }
-
-    IEnumerator Sleep(float time)
-    {
-        yield return new WaitForSeconds(time);
     }
 }
 

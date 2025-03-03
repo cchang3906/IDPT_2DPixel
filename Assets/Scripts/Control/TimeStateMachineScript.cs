@@ -44,6 +44,7 @@ public class TimeStateMachineScript: MonoBehaviour
         if (collision.CompareTag("Spotlight") && state == State.frozen)
         {
             state = State.flowing;
+            Debug.Log(currMomentum);
             rb.velocity = currMomentum;
         }
     }
@@ -53,13 +54,9 @@ public class TimeStateMachineScript: MonoBehaviour
         if (collision.CompareTag("Spotlight"))
         {
             state = State.frozen;
-            if (rb.velocity.magnitude <= 1)
+            if (rb.velocity.magnitude >= 1)
             {
                 currMomentum = rb.velocity;
-            }
-            else
-            {
-                currMomentum = rb.velocity / 2;
             }
             rb.velocity = Vector2.zero;
         }

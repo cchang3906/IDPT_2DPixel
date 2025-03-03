@@ -58,13 +58,14 @@ public class PlayerControl : MonoBehaviour
     {
         narrowSpot.SetActive(false);
         gun.SetActive(false);
+        BulletPanelScript.instance.InstaHideBulletCount();
     }
 
     // Update is called once per frame
     void Update()
     {
         HandleWeapons();
-        HandleCameraShake();
+        //HandleCameraShake();
         HandleDeath();
         HandleRotation();
         HandleMovement();
@@ -105,21 +106,13 @@ public class PlayerControl : MonoBehaviour
         }
         //Debug.Log(smoothMovement * walkSpeed);
     }
-    private void HandleCameraShake()
-    {
-        if ((Input.GetMouseButtonDown(0) && bulletCount > 0 && gun.activeSelf) || takenDamage || cameraControl.testShake)
-        {
-            //Debug.Log(bulletCount);
-            StartCoroutine(cameraControl.Shake());
-            takenDamage = false;
-            cameraControl.testShake = false;
-        }
-    }
+    
     private void HandleWeapons()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             gun.SetActive(true);
+            BulletPanelScript.instance.InstaAppearBulletCount();
             sword.SetActive(false);
             narrowSpot.SetActive(true);
             wideSpot.SetActive(false);
@@ -127,6 +120,7 @@ public class PlayerControl : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             gun.SetActive(false);
+            BulletPanelScript.instance.HideBulletCount();
             sword.SetActive(true);
             narrowSpot.SetActive(false);
             wideSpot.SetActive(true);

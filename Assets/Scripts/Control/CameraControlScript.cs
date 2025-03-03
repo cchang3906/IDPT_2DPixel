@@ -49,6 +49,10 @@ public class CameraControlScript : MonoBehaviour
 
             }
         }
+        if (PlayerControl.Instance.takenDamage)
+        {
+            StartCoroutine(Shake());
+        }
     }
     public void HandleCameraRotation(Vector2 lookInput)
     {

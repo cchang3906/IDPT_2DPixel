@@ -8,11 +8,11 @@ public class EnemyScript : MonoBehaviour
     // Start is called before the first frame update
     [SerializeField] private int enemyHealth;
     [SerializeField] private int knockbackForce;
-    [SerializeField] public bool aggro;
     [SerializeField] private float runSpeed;
     [SerializeField] private float attentionSpan;
     [SerializeField] private bool willRoam;
     [SerializeField] private int damage;
+    private bool detected;
     private bool isRoaming;
     private RoamBetweenScript roamScript;
     private GameObject player;
@@ -34,7 +34,6 @@ public class EnemyScript : MonoBehaviour
         startPos = transform.position;
         stateMachineScript = GetComponent<TimeStateMachineScript>();
         roamScript = GetComponent<RoamBetweenScript>();
-        flickerControl = GameObject.FindGameObjectWithTag("Player").transform.GetChild(0).GetComponent<FlickerControlScript>();
         if (willRoam)
         {
             isRoaming = true;
@@ -43,6 +42,7 @@ public class EnemyScript : MonoBehaviour
     }
     private void Start()
     {
+        flickerControl = FlickerControlScript.Instance;
         playerControl = PlayerControl.Instance;
         agent.updateRotation = false;
         agent.updateUpAxis = false;
@@ -155,12 +155,20 @@ public class EnemyScript : MonoBehaviour
                 isRoaming = false;
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.green);
                 targetPos = player.transform.position;
-                flickerControl.FlickeringOn();
+                if (!detected)
+                {
+                    detected = true;
+                    flickerControl.EnemyDetected();
+                }
             }
             else
             {
                 Debug.DrawRay(transform.position, player.transform.position - transform.position, Color.red);
-                flickerControl.FlickeringOff();
+                if (detected)
+                {
+                    detected = false;
+                    flickerControl.EnemyLost();
+                }
             }
         }
         else if (ray.collider != null)

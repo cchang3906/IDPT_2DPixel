@@ -9,6 +9,7 @@ public class FlickerControlScript : MonoBehaviour
     public bool flickering;
     [SerializeField] private List<string> triggerList;
     [SerializeField] private float minTime, maxTime;
+    [SerializeField] private int enemyCount = 0;
     public static FlickerControlScript Instance { get; private set; }
     private void Awake()
     {
@@ -24,6 +25,31 @@ public class FlickerControlScript : MonoBehaviour
     private void Start()
     {
         StartCoroutine(flickerLights());
+    }
+    public void EnemyDetected()
+    {
+        enemyCount++;
+        Debug.Log("Seen");
+        UpdateFlickerState();
+    }
+
+    public void EnemyLost()
+    {
+        enemyCount = Mathf.Max(0, enemyCount - 1);
+        Debug.Log("Not Seen");
+        UpdateFlickerState();
+    }
+
+    private void UpdateFlickerState()
+    {
+        if (enemyCount > 0)
+        {
+            FlickeringOn();
+        }
+        else
+        {
+            FlickeringOff();
+        }
     }
 
     IEnumerator flickerLights()

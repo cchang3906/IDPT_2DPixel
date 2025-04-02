@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class PlayerControl : MonoBehaviour
+public class BlindPlayerScript : MonoBehaviour
 {
     public int playerHealth = 100;
     [SerializeField] private float walkSpeed = 3f;
@@ -20,8 +20,7 @@ public class PlayerControl : MonoBehaviour
     private CameraControlScript cameraControl;
     private Vector2 mousePosition;
     private PlayerKnockback playerKnockback;
-    private GameObject narrowSpot;
-    private GameObject wideSpot;
+    private GameObject spot;
     private bool isDashing;
     private Rigidbody2D rb;
     private GameObject gun;
@@ -35,9 +34,11 @@ public class PlayerControl : MonoBehaviour
     public int swordDmg;
     public int bulletDmg;
     public int bulletCount;
-    public static PlayerControl Instance { get; private set; }
+    private Vector3 originalScale;
+    public static BlindPlayerScript Instance { get; private set; }
 
-    private void Awake(){
+    private void Awake()
+    {
         if (Instance == null)
         {
             Instance = this;
@@ -49,16 +50,15 @@ public class PlayerControl : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         gun = GameObject.FindGameObjectWithTag("Gun");
         sword = GameObject.FindGameObjectWithTag("SwordPivot");
-        narrowSpot = GameObject.Find("PlayerNarrow");
-        wideSpot = GameObject.Find("PlayerWide");
+        spot = GameObject.FindGameObjectWithTag("Spotlight");
         playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();
         cameraControl = mainCamera.GetComponent<CameraControlScript>();
     }
     void Start()
     {
-        //narrowSpot.SetActive(false);
         gun.SetActive(false);
         BulletPanelScript.instance.InstaHideBulletCount();
+        originalScale = spot.transform.localScale;
     }
 
     // Update is called once per frame
@@ -69,6 +69,10 @@ public class PlayerControl : MonoBehaviour
         HandleDeath();
         HandleRotation();
         HandleMovement();
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StartCoroutine(LerpScale(originalScale * 3, 2f));
+        }
     }
 
     private void FixedUpdate()
@@ -93,6 +97,21 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    IEnumerator LerpScale(Vector3 endScale, float time)
+    {
+        float elapsedTime = 0f;
+
+        while (elapsedTime < time)
+        {
+            float t = elapsedTime / time;
+            t = Mathf.Sin(t * Mathf.PI * 0.5f);
+            spot.transform.localScale = Vector3.Lerp(originalScale, endScale, t);
+            elapsedTime += Time.deltaTime;
+            yield return null; // Wait for the next frame
+        }
+
+        spot.transform.localScale = endScale; // Ensure it reaches the exact target scale
+    }
 
     private void HandleMovement()
     {
@@ -106,7 +125,7 @@ public class PlayerControl : MonoBehaviour
         }
         //Debug.Log(smoothMovement * walkSpeed);
     }
-    
+
     private void HandleWeapons()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -114,16 +133,12 @@ public class PlayerControl : MonoBehaviour
             gun.SetActive(true);
             BulletPanelScript.instance.InstaAppearBulletCount();
             sword.SetActive(false);
-            //narrowSpot.SetActive(true);
-            //wideSpot.SetActive(false);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             gun.SetActive(false);
             BulletPanelScript.instance.HideBulletCount();
             sword.SetActive(true);
-            //wideSpot.SetActive(true);
-            //narrowSpot.SetActive(false);
         }
     }
     private void HandleDeath()

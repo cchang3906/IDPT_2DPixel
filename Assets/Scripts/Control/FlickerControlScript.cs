@@ -29,14 +29,12 @@ public class FlickerControlScript : MonoBehaviour
     public void EnemyDetected()
     {
         enemyCount++;
-        Debug.Log("Seen");
         UpdateFlickerState();
     }
 
     public void EnemyLost()
     {
         enemyCount = Mathf.Max(0, enemyCount - 1);
-        Debug.Log("Not Seen");
         UpdateFlickerState();
     }
 

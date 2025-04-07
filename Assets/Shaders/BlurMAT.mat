@@ -110,7 +110,7 @@ Material:
     m_Floats:
     - _BUILTIN_QueueControl: 0
     - _BUILTIN_QueueOffset: 0
-    - _BlurAmount: 0.08661798
+    - _BlurAmount: 0.016680041
     - _EnableExternalAlpha: 0
     - _QueueControl: 0
     - _QueueOffset: 0

@@ -17,11 +17,10 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] private float staminaCooldown = 1f;
     [SerializeField] private int staminaRecovery = 20;
     [SerializeField] private float dashStamina = 35f;
+    private GameObject mainInventoryUI;
     private CameraControlScript cameraControl;
     private Vector2 mousePosition;
     private PlayerKnockback playerKnockback;
-    private GameObject narrowSpot;
-    private GameObject wideSpot;
     private bool isDashing;
     private Rigidbody2D rb;
     private GameObject gun;
@@ -49,16 +48,16 @@ public class PlayerControl : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         gun = GameObject.FindGameObjectWithTag("Gun");
         sword = GameObject.FindGameObjectWithTag("SwordPivot");
-        narrowSpot = GameObject.Find("PlayerNarrow");
-        wideSpot = GameObject.Find("PlayerWide");
         playerKnockback = GameObject.FindGameObjectWithTag("PlayerHitbox").GetComponent<PlayerKnockback>();
         cameraControl = mainCamera.GetComponent<CameraControlScript>();
+        mainInventoryUI = GameObject.FindGameObjectWithTag("MainInventoryUI");
     }
     void Start()
     {
         //narrowSpot.SetActive(false);
         gun.SetActive(false);
         BulletPanelScript.instance.InstaHideBulletCount();
+        mainInventoryUI.SetActive(false);
     }
 
     // Update is called once per frame
@@ -66,6 +65,7 @@ public class PlayerControl : MonoBehaviour
     {
         HandleWeapons();
         //HandleCameraShake();
+        HandleInventory();
         HandleDeath();
         HandleRotation();
         HandleMovement();
@@ -124,6 +124,21 @@ public class PlayerControl : MonoBehaviour
             sword.SetActive(true);
             //wideSpot.SetActive(true);
             //narrowSpot.SetActive(false);
+        }
+    }
+    private void HandleInventory()
+    {
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if(mainInventoryUI.activeSelf)
+            {
+                mainInventoryUI.SetActive(false);
+                
+            }
+            else
+            {
+                mainInventoryUI.SetActive(true);
+            }
         }
     }
     private void HandleDeath()

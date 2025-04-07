@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5702612885170025216}
   m_Layer: 2
   m_Name: WideDirectional
-  m_TagString: WideSpotlight
+  m_TagString: Spotlight
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -1,2 +1,3 @@
 # IDPT_2DPixel
-WIP
+Independent project in Unity exploring game mechanics centered around lighting mechanisms.
+2D Top Down.
